@@ -104,6 +104,19 @@ public class Main {
                     case 6:
                         System.out.print("Número de factura: ");
                         String numPago = scanner.nextLine();
+                        
+                        if (servicio.getCuentas().isEmpty()) {
+                            System.out.println("Debe registrar al menos una cuenta para realizar el pago.");
+                            break;
+                        }
+                        System.out.println("Seleccione la cuenta para pagar (índice 0 a " + (servicio.getCuentas().size() - 1) + "): ");
+                        for (int i = 0; i < servicio.getCuentas().size(); i++) {
+                            Cuenta c = servicio.getCuentas().get(i);
+                            System.out.println(i + ". " + c.getTitular() + " - Saldo: " + c.getSaldo());
+                        }
+                        int idxCuenta = Integer.parseInt(scanner.nextLine());
+                        Cuenta cuentaPago = servicio.getCuentas().get(idxCuenta);
+
                         System.out.print("Medio de pago (1. PSE, 2. Nequi, 3. Tarjeta): ");
                         int medio = Integer.parseInt(scanner.nextLine());
                         System.out.print("Monto a pagar: ");
@@ -117,7 +130,7 @@ public class Main {
                         else
                             medioPago = new PagoTarjeta();
 
-                        servicio.pagarFactura(numPago, medioPago, monto);
+                        servicio.pagarFactura(numPago, medioPago, monto, cuentaPago);
                         break;
                     case 7:
                         System.out.println("\n--- Lista de Facturas ---");

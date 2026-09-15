@@ -35,13 +35,17 @@ public class ServicioFacturacion {
         return clientes;
     }
 
+    public List<Cuenta> getCuentas() {
+        return cuentas;
+    }
+
     public Optional<Factura> buscarFacturaPorNumero(String numero) {
         return facturas.stream()
                 .filter(f -> f.getNumero().equals(numero))
                 .findFirst();
     }
 
-    public boolean pagarFactura(String numeroFactura, MedioPago medioPago, double valor) {
+    public boolean pagarFactura(String numeroFactura, MedioPago medioPago, double valor, Cuenta cuenta) {
         Optional<Factura> optFactura = buscarFacturaPorNumero(numeroFactura);
         if (optFactura.isEmpty()) {
             System.out.println("Factura no encontrada.");
@@ -66,10 +70,20 @@ public class ServicioFacturacion {
             return false;
         }
 
+        try {
+            cuenta.retirar(valor);
+        } catch (IllegalArgumentException e) {
+            System.out.println("No se pudo procesar el pago con la cuenta: " + e.getMessage());
+            return false;
+        }
+
         boolean pagoAprobado = medioPago.pagar(valor);
         if (pagoAprobado) {
             factura.setEstado(EstadoFactura.PAGADA);
             return true;
+        } else {
+            // Reembolsar si el medio de pago rechaza
+            cuenta.consignar(valor);
         }
 
         return false;

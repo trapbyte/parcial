@@ -38,9 +38,10 @@ public class FacturaTest {
         Factura factura = new Factura("F002", cliente, "Mouse", 50000, 0);
         ServicioFacturacion servicio = new ServicioFacturacion();
         servicio.crearFactura(factura);
+        Cuenta cuenta = new CuentaAhorro("Sergio", 100000);
 
         MedioPago pagoPSE = new PagoPSE();
-        boolean resultado = servicio.pagarFactura("F002", pagoPSE, 50000);
+        boolean resultado = servicio.pagarFactura("F002", pagoPSE, 50000, cuenta);
         
         assertTrue(resultado);
         assertEquals(EstadoFactura.PAGADA, factura.getEstado());
@@ -51,9 +52,10 @@ public class FacturaTest {
         Factura factura = new Factura("F003", cliente, "Teclado", 100000, 19); // total 119000
         ServicioFacturacion servicio = new ServicioFacturacion();
         servicio.crearFactura(factura);
+        Cuenta cuenta = new CuentaAhorro("Sergio", 150000);
 
         MedioPago pagoPSE = new PagoPSE();
-        boolean resultado = servicio.pagarFactura("F003", pagoPSE, 100000); // 100000 < 119000
+        boolean resultado = servicio.pagarFactura("F003", pagoPSE, 100000, cuenta); // 100000 < 119000
         
         assertFalse(resultado);
         assertEquals(EstadoFactura.PENDIENTE, factura.getEstado());
@@ -64,11 +66,12 @@ public class FacturaTest {
         Factura factura = new Factura("F004", cliente, "Monitor", 200000, 0);
         ServicioFacturacion servicio = new ServicioFacturacion();
         servicio.crearFactura(factura);
+        Cuenta cuenta = new CuentaAhorro("Sergio", 500000);
 
         MedioPago pagoPSE = new PagoPSE();
-        servicio.pagarFactura("F004", pagoPSE, 200000); // Primer pago
+        servicio.pagarFactura("F004", pagoPSE, 200000, cuenta); // Primer pago
         
-        boolean resultadoSegundoPago = servicio.pagarFactura("F004", pagoPSE, 200000); // Segundo pago
+        boolean resultadoSegundoPago = servicio.pagarFactura("F004", pagoPSE, 200000, cuenta); // Segundo pago
         assertFalse(resultadoSegundoPago);
     }
 }
